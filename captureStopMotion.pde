@@ -6,29 +6,27 @@ Capture cam;
 Button captureBtn;
 Button previewBtn;
 Button cancelBtn;
+ScrollableList camList;
 PImage oldFrame;
 ArrayList<ControlFrame> previews;
 
-String DATA_PATH; 
+final String DATA_PATH = System.getProperty("user.home") + "/Documents/catptureStopMotion/"; 
 
 void settings() {
   size(1280, 720);
 }
 
 void setup() { 
-
-  DATA_PATH = System.getProperty("user.home") + "/Documents/catptureStopMotion/";
-
   File dPath = new File(DATA_PATH);
   if (!dPath.exists()) {
     dPath.mkdir();
   }
 
   previews = new ArrayList<ControlFrame> ();
-
+  
   surface.setResizable(true);
   cp5 = new ControlP5(this);
-  cp5.addScrollableList("dropdown")
+  camList = cp5.addScrollableList("dropdown")
     .setLabel("Select your camera")
     .setPosition(0, 0)
     .setSize(width/4-1, 200)
@@ -48,8 +46,6 @@ void setup() {
   previewBtn = cp5.addButton("Preview")
     .setPosition(3*width/4.0 + 1, 0)
     .setSize(width/4 - 1, 25);
-
-  loadLastFrame();
 }
 
 void draw() {
@@ -99,29 +95,27 @@ void draw() {
 }
 
 public void dropdown(int n) {
-  ScrollableList self = cp5.get(ScrollableList.class, "dropdown");
-  List<Map<String, Object>> items = self.getItems();
-  Map<String, Object> curentItem = self.getItem(n);
-
-  cam = new Capture(this, 1280, 720, (String)(curentItem.get("name")));
-  cam.start();
-
-  CColor c = new CColor();
-  c.setBackground(color(255, 0, 0));
+  List<Map<String, Object>> items = camList.getItems();
+  Map<String, Object> curentItem = camList.getItem(n);
+  String camName = (String)(curentItem.get("name"));
 
   CColor defaultC = new CColor();
   defaultC.setBackground(color(3, 46, 89));
-
   for (Map<String, Object> item : items) {
     item.put("color", defaultC);
   }
-  curentItem.put("color", c);
+  
+  CColor selectColor = new CColor();
+  selectColor.setBackground(color(255, 0, 0));
+  curentItem.put("color", selectColor);
+  
+  cam = new Capture(this, 1280, 720, camName);
+  cam.start();
 }
 
 public void Preview(int theValue) {
   previews.add(new ControlFrame(this, 1280, 720, "Preview"));
 }
-
 
 public void Capture(int theValue) {
   PImage frame = cam.copy();

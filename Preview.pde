@@ -1,6 +1,7 @@
 
 class ControlFrame extends PApplet {
   int w, h;
+  String name;
   PImage current;
   int cursor = 0;
   PApplet parent;
@@ -11,6 +12,7 @@ class ControlFrame extends PApplet {
   public ControlFrame(PApplet _parent, int _w, int _h, String _name) {
     super();   
     parent = _parent;
+    name = _name;
     w=_w;
     h=_h;
     delayMillis = 1000/FPS;
@@ -22,6 +24,8 @@ class ControlFrame extends PApplet {
   }
 
   public void setup() {
+    
+    surface.setTitle(name);
     surface.setLocation(10, 10);
     pictures = new ArrayList<PImage>();
     ArrayList<File> pictFile = getPicturesAt();
@@ -40,7 +44,7 @@ class ControlFrame extends PApplet {
   }
 
   void draw() {
-    if (pictures.size()<= 0) {
+    if (pictures.size() <= 0) {
       background(0);
       return;
     }
